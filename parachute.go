@@ -12,11 +12,11 @@ type Result[T any] struct {
 	Shared bool
 }
 
-type Parachute[T any] struct {
+type Group[T any] struct {
 	sf singleflight.Group
 }
 
-func (g *Parachute[T]) Do(key string, fn func() (T, error)) (T, error, bool) {
+func (g *Group[T]) Do(key string, fn func() (T, error)) (T, error, bool) {
 	val, err, shared := g.sf.Do(key, func() (any, error) {
 		return fn()
 	})
@@ -30,7 +30,7 @@ func (g *Parachute[T]) Do(key string, fn func() (T, error)) (T, error, bool) {
 	return v, err, shared
 }
 
-func (g *Parachute[T]) DoChan(key string, fn func() (T, error)) <-chan Result[T] {
+func (g *Group[T]) DoChan(key string, fn func() (T, error)) <-chan Result[T] {
 	sfChan := g.sf.DoChan(key, func() (any, error) {
 		return fn()
 	})
@@ -51,6 +51,6 @@ func (g *Parachute[T]) DoChan(key string, fn func() (T, error)) <-chan Result[T]
 	return ch
 }
 
-func (g *Parachute[T]) Forget(key string) {
+func (g *Group[T]) Forget(key string) {
 	g.sf.Forget(key)
 }

@@ -8,7 +8,7 @@ import (
 )
 
 func TestAPI(t *testing.T) {
-	pch := parachute.Parachute[int]{}
+	pch := parachute.Group[int]{}
 
 	expected := 71
 	actual, err, shared := pch.Do("k1", func() (int, error) {
